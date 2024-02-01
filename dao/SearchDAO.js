@@ -6,10 +6,12 @@ class SearchDAO{
     constructor() {
     }
 
-    getLocalsByTags = async (req, res) => {
+    getLocalsByParams = async (req, res) => {
         let hasOperatingPeriodParam = Boolean(req.id_period)
+        let hasCityParam = Boolean(req.id_city)
+        var locals = []
         
-        const data = await postgresSql`
+        await postgresSql`
                 SELECT tb_local.id_local,
                       tb_local.nm_local, 
                       tb_address.nm_address, 
@@ -37,8 +39,37 @@ class SearchDAO{
                       postgresSql` AND tb_local_operating_period.id_period = ${req.id_period} ` 
                     : postgresSql``
                 }
-            `
-        res.json(data)
+                ${
+                    hasCityParam ?
+                      postgresSql` AND tb_city.id_city = ${req.id_city} `
+                    : postgresSql``
+                }
+            `.forEach(it => {
+                let local = new LocalDTO()
+                local.idLocal = it.id_local
+                local.nmLocal = it.nm_local
+                local.nmAddress = it.nm_address
+                local.cdNumberAddress = it.cd_number_address
+                local.nmCity = it.nm_city
+                local.dhBeginDay = it.dh_begin_day
+                local.dhEndDay = it.dh_end_day
+                locals.push(local)
+            })
+        return locals
+        //res.json(data)
+    }
+
+    getLocalsByTags = async(req, res) => {
+        let localsMap = new Map()
+        await postgresSql`
+                SELECT tb_local_tag.id_local
+                FROM tb_local_tag
+                WHERE id_tag IN ${ postgresSql(req.idTagList)}
+        `.forEach(it => {
+            if(!localsMap.has(it.id_local)) localsMap.set(it.id_local, 0)
+            localsMap.set(it.id_local, localsMap.get(it.id_local) + 1)
+        })
+        return localsMap
     }
 }
 

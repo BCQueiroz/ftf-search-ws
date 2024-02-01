@@ -21,9 +21,20 @@ class SearchController{
         var data = {}
         if(req && req.body) data = req.body
         data.weekDay = weekDays[day]
+        data.idTagList = [1, 2, 3]
+        const localsByParams = await this.searchDAO.getLocalsByParams(data, res)
+        const localsByTagCountMap = await this.searchDAO.getLocalsByTags(data, res)
 
-        const result = await this.searchDAO.getLocalsByTags(data, res)
-        return result
+        var finalLocalsList = []
+        localsByParams.forEach(local => {
+            if(localsByTagCountMap.has(local.idLocal) 
+                && localsByTagCountMap.get(local.idLocal) == data.idTagList.length){
+                finalLocalsList.push(local)
+            }
+        })
+
+        console.log(finalLocalsList)
+        return JSON.stringify(finalLocalsList)
     }
 }
 
