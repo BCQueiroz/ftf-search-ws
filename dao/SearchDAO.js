@@ -1,5 +1,5 @@
 const LocalDTO = require('../model/LocalDTO')
-const postgresSql = require('../utils/db')
+const postgresSql = require('../utils/DbConnector')
 
 class SearchDAO{
 
@@ -7,8 +7,8 @@ class SearchDAO{
     }
 
     getLocalsByParams = async (req, res) => {
-        let hasOperatingPeriodParam = Boolean(req.id_period)
-        let hasCityParam = Boolean(req.id_city)
+        let hasOperatingPeriodParam = Boolean(req.idPeriod)
+        let hasCityParam = Boolean(req.idCity)
         var locals = []
         
         await postgresSql`
@@ -36,12 +36,12 @@ class SearchDAO{
                 WHERE UPPER(tb_week_workday.nm_day) = ${req.weekDay} 
                 ${
                     hasOperatingPeriodParam ? 
-                      postgresSql` AND tb_local_operating_period.id_period = ${req.id_period} ` 
+                      postgresSql` AND tb_local_operating_period.id_period = ${req.idPeriod} ` 
                     : postgresSql``
                 }
                 ${
                     hasCityParam ?
-                      postgresSql` AND tb_city.id_city = ${req.id_city} `
+                      postgresSql` AND tb_city.id_city = ${req.idCity} `
                     : postgresSql``
                 }
             `.forEach(it => {
@@ -59,12 +59,12 @@ class SearchDAO{
         //res.json(data)
     }
 
-    getLocalsByTags = async(req, res) => {
+    getLocalsByTags = async(data, res) => {
         let localsMap = new Map()
         await postgresSql`
                 SELECT tb_local_tag.id_local
                 FROM tb_local_tag
-                WHERE id_tag IN ${ postgresSql(req.idTagList)}
+                WHERE id_tag IN ${ postgresSql(data.idTagList)}
         `.forEach(it => {
             if(!localsMap.has(it.id_local)) localsMap.set(it.id_local, 0)
             localsMap.set(it.id_local, localsMap.get(it.id_local) + 1)

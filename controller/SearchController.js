@@ -16,14 +16,14 @@ class SearchController{
         this.routes.get('/search-locals', express.json(), this.getLocalsByTag.bind(this))
     }
 
-    async getLocalsByTag(req, res){
+    getLocalsByTag = async (req, res) => {
         const day = new Date().getDay()
         var data = {}
         if(req && req.body) data = req.body
         data.weekDay = weekDays[day]
-        data.idTagList = [1, 2, 3]
+        
         const localsByParams = await this.searchDAO.getLocalsByParams(data, res)
-        const localsByTagCountMap = await this.searchDAO.getLocalsByTags(data, res)
+        const localsByTagCountMap = data.idTagList ? await this.searchDAO.getLocalsByTags(data, res) : new Map()
 
         var finalLocalsList = []
         localsByParams.forEach(local => {
@@ -33,8 +33,7 @@ class SearchController{
             }
         })
 
-        console.log(finalLocalsList)
-        return JSON.stringify(finalLocalsList)
+        res.send(finalLocalsList)
     }
 }
 
