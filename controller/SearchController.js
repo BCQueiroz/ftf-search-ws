@@ -4,6 +4,7 @@ const postgres = require('postgres')
 const localDTO = require('../model/LocalDTO')
 const searchDAO = require('../dao/searchDAO')
 const weekDays = require('../utils/WeekDayEnum')
+const TagTypeDTO = require('../model/TagTypeDTO')
 
 class SearchController{
 
@@ -13,10 +14,11 @@ class SearchController{
         this.searchDAO = new searchDAO()
         this.postgressConnection = postgres(process.env.DB_CONNECTION, {})
 
-        this.routes.get('/search-locals', express.json(), this.getLocalsByTag.bind(this))
+        this.routes.get('/search-locals', express.json(), this.searchLocals.bind(this))
+        this.routes.get('/get-all-tags', express.json(), this.getAllTags.bind(this))
     }
 
-    getLocalsByTag = async (req, res) => {
+    searchLocals = async (req, res) => {
         const day = new Date().getDay()
         var data = {}
         if(req && req.body) data = req.body
@@ -34,6 +36,29 @@ class SearchController{
         })
 
         res.send(finalLocalsList)
+    }
+
+    getAllTags = async (req, res) => {
+        var tagInfoList = await this.searchDAO.getAllTags()
+        var tagsAggregatedByType = new Map()
+        tagInfoList.forEach(it => {
+            var tagInfo = {
+                idTag : it.idTag,
+                dsTag : it.dsTag
+            }
+            if(tagsAggregatedByType.has(it.idTypeTag)){
+                tagsAggregatedByType.get(it.idTypeTag).tagList.push(tagInfo)
+            } else {
+                var tagTypeInfo = new TagTypeDTO()
+                tagTypeInfo.idTypeTag = it.idTypeTag
+                tagTypeInfo.dsTypeTag = it.dsTypeTag
+                tagTypeInfo.cdColorTypeTag = it.cdColorTypeTag
+                tagTypeInfo.tagList = [tagInfo]
+                tagsAggregatedByType.set(it.idTypeTag, tagTypeInfo)
+            }
+        })
+        
+        res.send(Array.from(tagsAggregatedByType.values()))
     }
 }
 

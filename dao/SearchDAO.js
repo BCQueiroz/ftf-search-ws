@@ -1,4 +1,5 @@
 const LocalDTO = require('../model/LocalDTO')
+const TagInfoDTO = require('../model/TagInfoDTO')
 const postgresSql = require('../utils/DbConnector')
 
 class SearchDAO{
@@ -6,9 +7,9 @@ class SearchDAO{
     constructor() {
     }
 
-    getLocalsByParams = async (req, res) => {
-        let hasOperatingPeriodParam = Boolean(req.idPeriod)
-        let hasCityParam = Boolean(req.idCity)
+    getLocalsByParams = async (data, res) => {
+        let hasOperatingPeriodParam = Boolean(data.idPeriod)
+        let hasCityParam = Boolean(data.idCity)
         var locals = []
         
         await postgresSql`
@@ -33,15 +34,15 @@ class SearchDAO{
                     ON tb_local.id_address = tb_address.id_address 
                 INNER JOIN tb_city 
                     ON tb_address.id_city = tb_city.id_city
-                WHERE UPPER(tb_week_workday.nm_day) = ${req.weekDay} 
+                WHERE UPPER(tb_week_workday.nm_day) = ${data.weekDay} 
                 ${
                     hasOperatingPeriodParam ? 
-                      postgresSql` AND tb_local_operating_period.id_period = ${req.idPeriod} ` 
+                      postgresSql` AND tb_local_operating_period.id_period = ${data.idPeriod} ` 
                     : postgresSql``
                 }
                 ${
                     hasCityParam ?
-                      postgresSql` AND tb_city.id_city = ${req.idCity} `
+                      postgresSql` AND tb_city.id_city = ${data.idCity} `
                     : postgresSql``
                 }
             `.forEach(it => {
@@ -56,20 +57,42 @@ class SearchDAO{
                 locals.push(local)
             })
         return locals
-        //res.json(data)
     }
 
-    getLocalsByTags = async(data, res) => {
-        let localsMap = new Map()
+    getLocalsByTags = async (data, res) => {
+        var localsMap = new Map()
         await postgresSql`
                 SELECT tb_local_tag.id_local
                 FROM tb_local_tag
-                WHERE id_tag IN ${ postgresSql(data.idTagList)}
+                WHERE id_tag IN ${ postgresSql(data.idTagList) }
         `.forEach(it => {
             if(!localsMap.has(it.id_local)) localsMap.set(it.id_local, 0)
             localsMap.set(it.id_local, localsMap.get(it.id_local) + 1)
         })
         return localsMap
+    }
+
+    getAllTags = async () => {
+        var tagList = []
+        await postgresSql`
+                SELECT tb_tag.id_tag,
+                       tb_tag.ds_tag,
+                       tb_type_tag.id_type_tag,
+                       tb_type_tag.ds_type_tag,
+                       tb_type_tag.cd_color_type_tag
+                FROM tb_tag
+                INNER JOIN tb_type_tag
+                    ON tb_tag.id_type_tag = tb_type_tag.id_type_tag  
+        `.forEach(it => {
+            var tagInfo = new TagInfoDTO() 
+            tagInfo.idTag = it.id_tag
+            tagInfo.dsTag = it.ds_tag
+            tagInfo.idTypeTag = it.id_type_tag
+            tagInfo.dsTypeTag = it.ds_type_tag
+            tagInfo.cdColorTypeTag = it.cd_color_type_tag
+            tagList.push(tagInfo)
+        })
+        return tagList
     }
 }
 
