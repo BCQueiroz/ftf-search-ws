@@ -17,6 +17,7 @@ class SearchController{
         this.routes.get('/search-locals', express.json(), this.searchLocals.bind(this))
         this.routes.get('/get-all-tags', express.json(), this.getAllTags.bind(this))
         this.routes.get('/get-all-cities', express.json(), this.getAllCities.bind(this))
+        this.routes.get('/get-local-additional-info', express.json(), this.getLocalAdditionalInfo.bind(this))
     }
 
     searchLocals = async (req, res) => {
@@ -65,6 +66,21 @@ class SearchController{
     getAllCities = async (req, res) => {
         var cityList = await this.searchDAO.getAllCities()
         res.send(cityList)
+    }
+
+    getLocalAdditionalInfo = async(req, res) => {
+        var data = req.body
+        var idLocal = data.idLocal
+        if(!Boolean(idLocal)) throw Error("Não foi passado id do local desejado na requisição, abortando.")
+
+        var localAdditionalInfo = await this.searchDAO.getLocalAdditionalInfo(idLocal)
+        var localAllTags = await this.searchDAO.getAllLocalTags(idLocal)
+        var localScheduleWork = await this.searchDAO.getLocalScheduleWork(idLocal)
+
+        localAdditionalInfo.localAllTags = localAllTags
+        localAdditionalInfo.localScheduleWork = localScheduleWork
+
+        res.send(localAdditionalInfo)
     }
 }
 
