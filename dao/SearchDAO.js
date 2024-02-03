@@ -2,6 +2,8 @@ const LocalDTO = require('../model/LocalDTO')
 const TagInfoDTO = require('../model/TagInfoDTO')
 const CityDTO = require('../model/CityDTO')
 const postgresSql = require('../utils/DbConnector')
+const LocalAdditionalInfoDTO = require('../model/LocalAdditionalInfoDTO')
+const LocalScheduleDTO = require('../model/LocalScheduleDTO')
 
 class SearchDAO{
 
@@ -113,6 +115,76 @@ class SearchDAO{
             cityList.push(cityInfo)
         })
         return cityList
+    }
+
+    getLocalAdditionalInfo = async (idLocal) => {
+        var localData = new LocalAdditionalInfoDTO()
+        await postgresSql`
+                SELECT tb_local.nm_local,
+                       COALESCE(tb_local.ds_local, '') AS ds_local,
+                       tb_local.ds_phone,
+                       COALESCE(tb_local.ds_site, '') AS ds_site,
+                       COALESCE(tb_local.ds_address_complement, '') AS ds_address_complement,
+                       COALESCE(tb_local.vl_min_price_aprox, 0) AS vl_min_price_aprox,
+                       COALESCE(tb_local.vl_max_price_aprox, 0) AS vl_max_price_aprox
+                FROM tb_local
+                WHERE id_local = ${idLocal} 
+        `.forEach(it => {
+            localData.nmLocal = it.nm_local
+            localData.dsLocal = it.ds_local
+            localData.dsPhone = it.ds_phone
+            localData.dsSite = it.ds_site
+            localData.dsAddressComplement = it.ds_address_complement
+            localData.vlMinPriceAprox = it.vl_min_price_aprox
+            localData.vlMaxPriceAprox = it.vl_max_price_aprox
+        })
+        return localData
+    }
+
+    getAllLocalTags = async (idLocal) => {
+        var tagList = []
+        await postgresSql`
+                SELECT tb_tag.id_tag,
+                       tb_tag.ds_tag,
+                       tb_type_tag.id_type_tag,
+                       tb_type_tag.ds_type_tag,
+                       tb_type_tag.cd_color_type_tag
+                FROM tb_local_tag
+                INNER JOIN tb_tag
+                    ON tb_local_tag.id_tag = tb_tag.id_tag
+                INNER JOIN tb_type_tag
+                    ON tb_tag.id_type_tag = tb_type_tag.id_type_tag
+                WHERE tb_local_tag.id_local = ${idLocal}
+        `.forEach(it => {
+            var tagInfo = new TagInfoDTO()
+            tagInfo.idTag = it.id_tag
+            tagInfo.dsTag = it.ds_tag
+            tagInfo.idTypeTag = it.id_type_tag
+            tagInfo.dsTypeTag = it.ds_type_tag
+            tagInfo.cdColorTypeTag = it.cd_color_type_tag
+            tagList.push(tagInfo)
+        })
+        return tagList
+    }
+
+    getLocalScheduleWork = async (idLocal) => {
+        var localScheduleWorkList = []
+        await postgresSql`
+                SELECT tb_week_workday.nm_day,
+                       tb_local_week_workday.dh_begin_day,
+                       tb_local_week_workday.dh_end_day
+                FROM tb_local_week_workday
+                INNER JOIN tb_week_workday
+                    ON tb_local_week_workday.id_day = tb_week_workday.id_day
+                WHERE tb_local_week_workday.id_local = ${idLocal}
+        `.forEach(it => {
+            var localScheduleWork = new LocalScheduleDTO()
+            localScheduleWork.nmDay = it.nm_day
+            localScheduleWork.dhBeginDay = it.dh_begin_day
+            localScheduleWork.dhEndDay = it.dh_end_day
+            localScheduleWorkList.push(localScheduleWork)
+        })
+        return localScheduleWorkList
     }
 }
 
