@@ -16,6 +16,7 @@ class SearchController{
 
         this.routes.get('/search-locals', express.json(), this.searchLocals.bind(this))
         this.routes.get('/get-all-tags', express.json(), this.getAllTags.bind(this))
+        this.routes.get('/get-all-cities', express.json(), this.getAllCities.bind(this))
     }
 
     searchLocals = async (req, res) => {
@@ -59,6 +60,11 @@ class SearchController{
         })
         
         res.send(Array.from(tagsAggregatedByType.values()))
+    }
+
+    getAllCities = async (req, res) => {
+        var cityList = await this.searchDAO.getAllCities()
+        res.send(cityList)
     }
 }
 

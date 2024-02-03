@@ -1,5 +1,6 @@
 const LocalDTO = require('../model/LocalDTO')
 const TagInfoDTO = require('../model/TagInfoDTO')
+const CityDTO = require('../model/CityDTO')
 const postgresSql = require('../utils/DbConnector')
 
 class SearchDAO{
@@ -93,6 +94,25 @@ class SearchDAO{
             tagList.push(tagInfo)
         })
         return tagList
+    }
+
+    getAllCities = async () => {
+        var cityList = []
+        await postgresSql`
+                SELECT tb_city.id_city,
+                       tb_city.nm_city,
+                       tb_state.cd_acronym
+                FROM tb_city
+                INNER JOIN tb_state
+                    ON tb_city.id_state = tb_state.id_state 
+        `.forEach(it => {
+            var cityInfo = new CityDTO()
+            cityInfo.idCity = it.id_city
+            cityInfo.nmCity = it.nm_city
+            cityInfo.cdAcronym = it.cd_acronym
+            cityList.push(cityInfo)
+        })
+        return cityList
     }
 }
 
