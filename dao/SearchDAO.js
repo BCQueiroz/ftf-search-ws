@@ -1,13 +1,14 @@
 const LocalDTO = require('../model/LocalDTO')
 const TagInfoDTO = require('../model/TagInfoDTO')
 const CityDTO = require('../model/CityDTO')
-const postgresSql = require('../utils/DbConnector')
+const postgressConnection = require('../utils/DbConnector')
 const LocalAdditionalInfoDTO = require('../model/LocalAdditionalInfoDTO')
 const LocalScheduleDTO = require('../model/LocalScheduleDTO')
 
 class SearchDAO{
 
     constructor() {
+        this.postgresSql = postgressConnection.newConection()
     }
 
     getLocalsByParams = async (data, res) => {
@@ -15,7 +16,7 @@ class SearchDAO{
         let hasCityParam = Boolean(data.idCity)
         var locals = []
         
-        await postgresSql`
+        await this.postgresSql`
                 SELECT tb_local.id_local,
                       tb_local.nm_local, 
                       tb_address.nm_address, 
@@ -25,9 +26,9 @@ class SearchDAO{
                       tb_local_week_workday.dh_end_day 
                 FROM tb_local ${
                     hasOperatingPeriodParam
-                        ? postgresSql` INNER JOIN tb_local_operating_period
+                        ? this.postgresSql` INNER JOIN tb_local_operating_period
                             ON tb_local.id_local = tb_local_operating_period.id_local `
-                        : postgresSql``
+                        : this.postgresSql``
                 }
                 INNER JOIN tb_local_week_workday
                     ON tb_local.id_local = tb_local_week_workday.id_local
@@ -40,13 +41,13 @@ class SearchDAO{
                 WHERE UPPER(tb_week_workday.nm_day) = ${data.weekDay} 
                 ${
                     hasOperatingPeriodParam ? 
-                      postgresSql` AND tb_local_operating_period.id_period = ${data.idPeriod} ` 
-                    : postgresSql``
+                      this.postgresSql` AND tb_local_operating_period.id_period = ${data.idPeriod} ` 
+                    : this.postgresSql``
                 }
                 ${
                     hasCityParam ?
-                      postgresSql` AND tb_city.id_city = ${data.idCity} `
-                    : postgresSql``
+                      this.postgresSql` AND tb_city.id_city = ${data.idCity} `
+                    : this.postgresSql``
                 }
             `.forEach(it => {
                 let local = new LocalDTO()
@@ -64,10 +65,10 @@ class SearchDAO{
 
     getLocalsByTags = async (data, res) => {
         var localsMap = new Map()
-        await postgresSql`
+        await this.postgresSql`
                 SELECT tb_local_tag.id_local
                 FROM tb_local_tag
-                WHERE id_tag IN ${ postgresSql(data.idTagList) }
+                WHERE id_tag IN ${ this.postgresSql(data.idTagList) }
         `.forEach(it => {
             if(!localsMap.has(it.id_local)) localsMap.set(it.id_local, 0)
             localsMap.set(it.id_local, localsMap.get(it.id_local) + 1)
@@ -77,7 +78,7 @@ class SearchDAO{
 
     getAllTags = async () => {
         var tagList = []
-        await postgresSql`
+        await this.postgresSql`
                 SELECT tb_tag.id_tag,
                        tb_tag.ds_tag,
                        tb_type_tag.id_type_tag,
@@ -100,7 +101,7 @@ class SearchDAO{
 
     getAllCities = async () => {
         var cityList = []
-        await postgresSql`
+        await this.postgresSql`
                 SELECT tb_city.id_city,
                        tb_city.nm_city,
                        tb_state.cd_acronym
@@ -119,7 +120,7 @@ class SearchDAO{
 
     getLocalAdditionalInfo = async (idLocal) => {
         var localData = new LocalAdditionalInfoDTO()
-        await postgresSql`
+        await this.postgresSql`
                 SELECT tb_local.nm_local,
                        COALESCE(tb_local.ds_local, '') AS ds_local,
                        tb_local.ds_phone,
@@ -143,7 +144,7 @@ class SearchDAO{
 
     getAllLocalTags = async (idLocal) => {
         var tagList = []
-        await postgresSql`
+        await this.postgresSql`
                 SELECT tb_tag.id_tag,
                        tb_tag.ds_tag,
                        tb_type_tag.id_type_tag,
@@ -169,7 +170,7 @@ class SearchDAO{
 
     getLocalScheduleWork = async (idLocal) => {
         var localScheduleWorkList = []
-        await postgresSql`
+        await this.postgresSql`
                 SELECT tb_week_workday.nm_day,
                        tb_local_week_workday.dh_begin_day,
                        tb_local_week_workday.dh_end_day
