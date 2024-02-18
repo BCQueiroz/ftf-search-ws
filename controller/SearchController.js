@@ -21,6 +21,11 @@ class SearchController{
     }
 
     searchLocals = async (req, res) => {
+        const locals = await this.getLocalsData(req, res)
+        res.send(locals)
+    }
+
+    getLocalsData = async (req, res) => {
         const day = new Date().getDay()
         var data = {}
         if(req && req.body) data = req.body
@@ -37,7 +42,7 @@ class SearchController{
             }
         })
 
-        res.send(finalLocalsList)
+        return finalLocalsList
     }
 
     getAllTags = async (req, res) => {
