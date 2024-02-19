@@ -1,6 +1,5 @@
 require('dotenv').config()
 const express = require('express')
-const postgres = require('postgres')
 const localDTO = require('../model/LocalDTO')
 const searchDAO = require('../dao/searchDAO')
 const weekDays = require('../utils/WeekDayEnum')
@@ -12,7 +11,6 @@ class SearchController{
         this.routes = express.Router()
         this.localDTO = new localDTO()
         this.searchDAO = new searchDAO()
-        this.postgressConnection = postgres(process.env.DB_CONNECTION, {})
 
         this.routes.get('/search-locals', express.json(), this.searchLocals.bind(this))
         this.routes.get('/get-all-tags', express.json(), this.getAllTags.bind(this))
