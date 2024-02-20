@@ -4,6 +4,7 @@ const passwordValidator = require('password-validator')
 const cryptoUtil = require('../utils/CryptoUtil')
 const dateUtil = require('../utils/DateUtil')
 const userDAO = require('../dao/UserDAO')
+const UserLoggedInfoDTO = require('../model/UserLoggedInfoDTO')
 
 class UserController {
 
@@ -22,6 +23,7 @@ class UserController {
                     .has().symbols()
 
         this.routes.get('/create-user-account', express.json(), this.createUserAccount.bind(this))
+        this.routes.get('/user-login', express.json(), this.userLogin.bind(this))
     }
 
     createUserAccount = async (req, res) => {
@@ -48,6 +50,30 @@ class UserController {
         }
 
         res.send({ success: true, message: 'Usuário criado com sucesso!'})
+    }
+
+    userLogin = async(req, res) => {
+        var data = {}
+        if(req && req.body) data = req.body
+
+        if(Boolean(data.email) == false || Boolean(data.password) == false) throw Error("Email e/ou senha não foram informados para iniciar validação de login, abortando.")
+
+        var userInfo = await this.userDAO.getUserDataByEmail(data.email)
+
+        if(Boolean(userInfo) == false) throw Error("Não existe usuário cadastrado com esse email. Por favor, confirme se o email está correto, ou crie uma nova conta se ainda não tiver uma.")
+    
+        var passwordIsOk = await this.cryptoUtil.validateEncryptedInfo(data.password, userInfo.password)
+
+        if(passwordIsOk){
+            var userLoggedInfo = new UserLoggedInfoDTO()
+            userLoggedInfo.idUser = userInfo.idUser
+            userLoggedInfo.nmUser = userInfo.nmUser
+            userLoggedInfo.dtBirthday = userInfo.dtBirthday
+            userLoggedInfo.isLogged = true
+            res.send({ success: true, message: "Usuário logado com sucesso.", result: userLoggedInfo})
+        } else {
+            throw Error("Senha inválida, tente novamente.")
+        }
     }
 
     validateAllParametersForUserCreation(data){
