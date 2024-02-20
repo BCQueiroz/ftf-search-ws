@@ -19,10 +19,16 @@ class UserDAO {
     }
 
     createNewUserAccount = async(data) => {
-        await this.postgresSql`
-            INSERT INTO tb_user(nm_user, dt_birthday, ds_email, cd_password)
-            VALUES(${data.nmUser}, ${data.dtBirthday}, ${data.email}, ${data.password})
-        `
+        await this.postgresSql.begin(async sql => {
+            await this.postgresSql`
+                INSERT INTO tb_user(nm_user, dt_birthday, ds_email, cd_password)
+                VALUES(${data.nmUser}, ${data.dtBirthday}, ${data.email}, ${data.password})
+            `
+        }).then(() => {
+            console.log("Usuário inserido com sucesso.")
+        }).catch(()=> {
+            console.log("Erro ao inserir usuário.")
+        })
     }
 
 }
