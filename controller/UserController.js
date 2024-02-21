@@ -55,7 +55,12 @@ class UserController {
     userLogin = async(req, res) => {
         var data = {}
         if(req && req.body) data = req.body
+        var userLoggedInfo = await this.autenthicateByEmail(data)
 
+        res.send({ success: true, message: "Usuário logado com sucesso.", result: userLoggedInfo})
+    }
+
+    autenthicateByEmail = async(data) => {
         if(Boolean(data.email) == false || Boolean(data.password) == false) throw Error("Email e/ou senha não foram informados para iniciar validação de login, abortando.")
 
         var userInfo = await this.userDAO.getUserDataByEmail(data.email)
@@ -70,7 +75,7 @@ class UserController {
             userLoggedInfo.nmUser = userInfo.nmUser
             userLoggedInfo.dtBirthday = userInfo.dtBirthday
             userLoggedInfo.isLogged = true
-            res.send({ success: true, message: "Usuário logado com sucesso.", result: userLoggedInfo})
+            return userLoggedInfo
         } else {
             throw Error("Senha inválida, tente novamente.")
         }
