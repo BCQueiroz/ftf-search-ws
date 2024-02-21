@@ -1,3 +1,4 @@
+const UserInfoDTO = require('../model/UserInfoDTO')
 const postgressConnection = require('../utils/DbConnector')
 
 class UserDAO {
@@ -29,6 +30,24 @@ class UserDAO {
         }).catch(()=> {
             console.log("Erro ao inserir usuário.")
         })
+    }
+
+    getUserDataByEmail = async(dsEmail) => {
+        var userInfo =  new UserInfoDTO()
+        await this.postgresSql`
+            SELECT id_user,
+                    nm_user,
+                    dt_birthday,
+                    cd_password
+            FROM tb_user
+            WHERE ds_email = ${dsEmail}
+        `.forEach(it => {
+            userInfo.idUser = it.id_user
+            userInfo.nmUser = it.nm_user
+            userInfo.dtBirthday = it.dt_birthday
+            userInfo.password = it.cd_password
+        })
+        return userInfo
     }
 
 }
