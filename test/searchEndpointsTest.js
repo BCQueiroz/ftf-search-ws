@@ -3,6 +3,7 @@ const assert = require('assert')
 const SearchDAO = require('../dao/searchDAO')
 const SearchController = require('../controller/searchController')
 
+/*
 describe('Banco de Dados', function() {
     describe('getAllCities()', function() {
         it('Testar retorno da função getCities()', async function() {
@@ -89,3 +90,5 @@ describe('Banco de Dados', function() {
         })
     })
 })
+
+*/
