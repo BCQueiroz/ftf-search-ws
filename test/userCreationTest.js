@@ -1,7 +1,7 @@
 const assert = require('assert')
 const UserController = require('../controller/UserController')
 
-describe('Testar validações para criação de usuario', function(){
+describe('Testar validações para criação de usuario', function() {
     describe('Testar validação de nome do usuário', function() {
         it('Testar string vazia como nome', function() {
             var name = ""

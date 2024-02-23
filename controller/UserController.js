@@ -24,6 +24,7 @@ class UserController {
 
         this.routes.get('/create-user-account', express.json(), this.createUserAccount.bind(this))
         this.routes.get('/user-login', express.json(), this.userLogin.bind(this))
+        this.routes.get('/recover-password-by-email', express.json(), this.recoverPasswordByEmail.bind(this))
     }
 
     createUserAccount = async (req, res) => {
@@ -79,6 +80,29 @@ class UserController {
         } else {
             throw Error("Senha inválida, tente novamente.")
         }
+    }
+
+    recoverPasswordByEmail = async(req, res) => {
+        var data = {}
+        if(req && req.body && req.body.idUser && req.body.newPassword && req.body.email) data = req.body 
+        else throw Error("Não foram informadas todas as informações para atualizar a senha.")
+
+        var newPasswordHash = await this.validateAndEncryptNewPassword(data)
+        try{
+            await this.userDAO.updateUserPassword(data.idUser, newPasswordHash)
+            res.send({ success: true, message: "Senha atualizada com sucesso.", result: {}})
+        } catch(e) {
+            throw new Error("Ocorreu um erro ao atualizar a senha, tente novamente.")
+        }
+    }
+
+    validateAndEncryptNewPassword = async(data) => {
+        var isValid = await this.userDAO.validateUserIsValid(data.idUser, data.email)
+        if(!isValid) throw new Error("Usuário não encontrado.")
+
+        if(this.validatePassword(data.newPassword) == false) throw new Error('Nova senha não está nos conformes necessários.')
+
+        return await this.cryptoUtil.encryptInfo(data.newPassword)
     }
 
     validateAllParametersForUserCreation(data){

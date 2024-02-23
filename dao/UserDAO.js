@@ -50,6 +50,33 @@ class UserDAO {
         return userInfo
     }
 
+    validateUserIsValid = async(idUser, email) => {
+        var isValid = false 
+        await this.postgresSql`
+            SELECT EXISTS(
+                SELECT 1 FROM tb_user
+                WHERE id_user = ${idUser}
+                    AND ds_email = ${email}
+            ) AS is_valid
+        `.forEach(it => {
+            isValid = it.is_valid
+        })
+        return isValid
+    }
+
+    updateUserPassword = async(idUser, hashPassword) => {
+        await this.postgresSql.begin(async sql => {
+            await this.postgresSql`
+                UPDATE tb_user SET cd_password = ${hashPassword}
+                WHERE id_user = ${idUser}
+            `
+        }).then(() => {
+            console.log("Senha atualizada com sucesso.")
+        }).catch(()=> {
+            console.log("Erro ao atualizar senha.")
+        })
+    }
+
 }
 
 module.exports = UserDAO
