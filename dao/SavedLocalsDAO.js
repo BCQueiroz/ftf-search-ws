@@ -35,6 +35,7 @@ class SavedLocalsDAO {
             await this.postgresSql`
                 INSERT INTO tb_local_user_saved(id_local, id_user)
                 VALUES(${data.idLocal}, ${data.idUser})
+                ON CONFLICT DO NOTHING
             `
         }).then(() => {
             console.log("Local salvo com sucesso na lista do usuário.")

@@ -11,16 +11,8 @@ class SavedLocalsController {
     }
 
     saveNewLocalByUser = async(req, res) => {
-        //validar se dados necessários vieram
-        //validar se o idUser existe
-        //validar se o idLocal existe
-        //salvar os dados no banco
-
-        var data = {}
-        if(req && req.body && req.body.idUser && req.body.idLocal) data = req.body 
-        else throw Error("Não foram informadas todas as informações para salvar o local nos favoritos.")
-
-        var isSuccess = await this.validateAndSaveLocalInUserFavorites(data)
+        var isSuccess = await this.validateAndSaveLocalInUserFavorites(req)
+        
         if(isSuccess) {
             res.send({success: true, result: {}, message: "Local salvo com sucesso na lista do usuário."})
         } else {
@@ -28,7 +20,11 @@ class SavedLocalsController {
         }
     }
 
-    validateAndSaveLocalInUserFavorites = async(data) => {
+    validateAndSaveLocalInUserFavorites = async(req) => {
+        var data = {}
+        if(req && req.body && req.body.idUser && req.body.idLocal) data = req.body 
+        else throw Error("Não foram informadas todas as informações para salvar o local nos favoritos.")
+
         var userExists = await this.savedLocalsDAO.validateIfUserExists(data.idUser)
         if(!userExists) throw Error('O Usuário informado não existe.')
 
@@ -36,9 +32,10 @@ class SavedLocalsController {
         if(!localExists) throw Error('O Local informado não existe.')
 
         try{
-
+            await this.savedLocalsDAO.saveNewLocalInUserList(data)
+            return true
         } catch(e){
-            
+            return false
         }
     }
 
