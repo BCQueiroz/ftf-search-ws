@@ -1,7 +1,7 @@
 const assert = require('assert')
 const SavedLocalsController = require('../controller/SavedLocalsController')
 
-describe('Testar funções de salvar locais como favoritos', function(){
+describe('Testar funções de salvar locais como favoritos e retornar esses locais', function(){
     const savedLocalsController = new SavedLocalsController()
 
     describe('Testar cenários para salvar novos locais escolhidos pelo usuário', async function(){
@@ -95,6 +95,52 @@ describe('Testar funções de salvar locais como favoritos', function(){
                 var isSuccess = false
             }
             assert.deepEqual(Boolean(isSuccess), true)
+        })
+    })
+
+    describe('Testar serviço que retorna os locais salvos', async function(){
+
+        it('Falta de informações enviadas pela requisição, faltando tudo', async function(){
+            const req = {
+                body: {}
+            }; 
+
+            try {
+                var result = await savedLocalsController.validateAndGetLocalsByIdUser(req)
+            } catch(e) {
+                var result = false
+            }
+            assert.deepEqual(Boolean(result), false)
+        })
+
+        it('Informações enviadas na requisição, id do usuario inválido', async function(){
+            const req = {
+                body: {
+                    idUser: 0
+                }
+            }; 
+
+            try {
+                var result = await savedLocalsController.validateAndGetLocalsByIdUser(req)
+            } catch(e) {
+                var result = false
+            }
+            assert.deepEqual(Boolean(result), false)
+        })
+
+        it('Informações enviadas na requisição, id sem problemas, deve retornar com sucesso a lista, seja com valores ou vazia', async function(){
+            const req = {
+                body: {
+                    idUser: 3
+                }
+            }; 
+
+            try {
+                var result = await savedLocalsController.validateAndGetLocalsByIdUser(req)
+            } catch(e) {
+                var result = false
+            }
+            assert.deepEqual(Boolean(result), true)
         })
     })
 })
