@@ -1,10 +1,12 @@
 
 const assert = require('assert')
-const SearchDAO = require('../dao/searchDAO')
-const SearchController = require('../controller/searchController')
+const SearchController = require('../controller/SearchController')
 
 /*
 describe('Banco de Dados', function() {
+
+    const searchController = new SearchController()
+
     describe('getAllCities()', function() {
         it('Testar retorno da função getCities()', async function() {
             var cities = await new SearchDAO().getAllCities()
@@ -89,6 +91,4 @@ describe('Banco de Dados', function() {
             assert.deepEqual(result, [])
         })
     })
-})
-
-*/
+})*/

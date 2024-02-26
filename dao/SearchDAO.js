@@ -11,7 +11,7 @@ class SearchDAO{
         this.postgresSql = postgressConnection.newConection()
     }
 
-    getLocalsByParams = async (data, res) => {
+    getLocalsByParams = async (data) => {
         let hasOperatingPeriodParam = Boolean(data.idPeriod)
         let hasCityParam = Boolean(data.idCity)
         var locals = []
@@ -63,7 +63,7 @@ class SearchDAO{
         return locals
     }
 
-    getLocalsByTags = async (data, res) => {
+    getLocalsByTags = async (data) => {
         var localsMap = new Map()
         await this.postgresSql`
                 SELECT tb_local_tag.id_local

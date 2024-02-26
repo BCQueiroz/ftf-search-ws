@@ -1,5 +1,4 @@
 require('dotenv').config()
-const express = require('express')
 const localDTO = require('../model/LocalDTO')
 const searchDAO = require('../dao/searchDAO')
 const weekDays = require('../utils/WeekDayEnum')
@@ -8,29 +7,18 @@ const TagTypeDTO = require('../model/TagTypeDTO')
 class SearchController{
 
     constructor(){
-        this.routes = express.Router()
         this.localDTO = new localDTO()
         this.searchDAO = new searchDAO()
-
-        this.routes.get('/search-locals', express.json(), this.searchLocals.bind(this))
-        this.routes.get('/get-all-tags', express.json(), this.getAllTags.bind(this))
-        this.routes.get('/get-all-cities', express.json(), this.getAllCities.bind(this))
-        this.routes.get('/get-local-additional-info', express.json(), this.getLocalAdditionalInfo.bind(this))
     }
 
-    searchLocals = async (req, res) => {
-        const locals = await this.getLocalsData(req, res)
-        res.send(locals)
-    }
-
-    getLocalsData = async (req, res) => {
+    searchLocals = async (req) => {
         const day = new Date().getDay()
         var data = {}
         if(req && req.body) data = req.body
         data.weekDay = weekDays[day]
         
-        const localsByParams = await this.searchDAO.getLocalsByParams(data, res)
-        const localsByTagCountMap = data.idTagList ? await this.searchDAO.getLocalsByTags(data, res) : new Map()
+        const localsByParams = await this.searchDAO.getLocalsByParams(data)
+        const localsByTagCountMap = data.idTagList ? await this.searchDAO.getLocalsByTags(data) : new Map()
 
         var finalLocalsList = []
         localsByParams.forEach(local => {
@@ -43,7 +31,7 @@ class SearchController{
         return finalLocalsList
     }
 
-    getAllTags = async (req, res) => {
+    getAllTags = async () => {
         var tagInfoList = await this.searchDAO.getAllTags()
         var tagsAggregatedByType = new Map()
         tagInfoList.forEach(it => {
@@ -63,15 +51,14 @@ class SearchController{
             }
         })
         
-        res.send(Array.from(tagsAggregatedByType.values()))
+        return Array.from(tagsAggregatedByType.values())
     }
 
-    getAllCities = async (req, res) => {
-        var cityList = await this.searchDAO.getAllCities()
-        res.send(cityList)
+    getAllCities = async () => {
+        return await this.searchDAO.getAllCities()
     }
 
-    getLocalAdditionalInfo = async(req, res) => {
+    getLocalAdditionalInfo = async(req) => {
         var data = req.body
         var idLocal = data.idLocal
         if(!Boolean(idLocal)) throw Error("Não foi passado id do local desejado na requisição, abortando.")
@@ -83,7 +70,7 @@ class SearchController{
         localAdditionalInfo.localAllTags = localAllTags
         localAdditionalInfo.localScheduleWork = localScheduleWork
 
-        res.send(localAdditionalInfo)
+       return localAdditionalInfo
     }
 }
 

@@ -6,9 +6,11 @@ describe('Testar funções do login e recuperação de senha', function(){
 
     describe('Testar cenários para login', function(){
         it('Email e senha não serem enviados na requisição', async function(){
-            var data = {}
+            const req = {
+                body: {}
+            }
             try{
-                var result = await userController.autenthicateByEmail(data)
+                var result = await userController.autenthicateByEmail(req)
             } catch(e) {
                 var result = false
             }
@@ -16,12 +18,14 @@ describe('Testar funções do login e recuperação de senha', function(){
         })
 
         it('Email não foi enviado na requisição', async function(){
-            var data = {
-                password: "abgf-9iK"
+            const req = {
+                body: {
+                    password: "abgf-9iK"
+                }
             }
             
             try{
-                var result = await userController.autenthicateByEmail(data)
+                var result = await userController.autenthicateByEmail(req)
             } catch(e) {
                 var result = false
             }
@@ -29,12 +33,14 @@ describe('Testar funções do login e recuperação de senha', function(){
         })
 
         it('Senha não foi enviada na requisição', async function(){
-            var data = {
-                email: "aghury5@gmail.com"
+            const req = {
+                body: {
+                    email: "aghury5@gmail.com"
+                }
             }
             
             try{
-                var result = await userController.autenthicateByEmail(data)
+                var result = await userController.autenthicateByEmail(req)
             } catch(e) {
                 var result = false
             }
@@ -42,13 +48,15 @@ describe('Testar funções do login e recuperação de senha', function(){
         })
 
         it('Email e senha foram enviados porém não existe cadastro para o email', async function(){
-            var data = {
-                email: "aghury5@gmail.com",
-                password: "abgf-9iK"
+            const req = {
+                body: {
+                    email: "aghury5@gmail.com",
+                    password: "abgf-9iK"
+                }
             }
-    
+            
             try{
-                var result = await userController.autenthicateByEmail(data)
+                var result = await userController.autenthicateByEmail(req)
             } catch(e) {
                 var result = false
             }
@@ -56,13 +64,15 @@ describe('Testar funções do login e recuperação de senha', function(){
         })
 
         it('Email e senha foram enviados, existe cadastro para o email, porém a senha não confere', async function(){
-            var data = {
-                email: "teste98@uol.com",
-                password: "Teste_34190"
+            const req = {
+                body: {
+                    email: "teste98@uol.com",
+                    password: "Teste_34190"
+                }
             }
     
             try{
-                var result = await userController.autenthicateByEmail(data)
+                var result = await userController.autenthicateByEmail(req)
             } catch(e) {
                 var result = false
             }
@@ -70,13 +80,15 @@ describe('Testar funções do login e recuperação de senha', function(){
         })
 
         it('Email e senha foram enviados, existe cadastro para o email, a senha confere, logo, deve autenticar com sucesso', async function(){
-            var data = {
-                email: "teste98@uol.com",
-                password: "Teste_304343"
+            const req = {
+                body: {
+                    email: "teste98@uol.com",
+                    password: "Teste_304343"
+                }
             }
     
             try{
-                var result = await userController.autenthicateByEmail(data)
+                var result = await userController.autenthicateByEmail(req)
             } catch(e) {
                 var result = false
             }

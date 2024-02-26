@@ -12,7 +12,8 @@ describe('Testar funções de salvar locais como favoritos e retornar esses loca
             };
 
             try {
-                var isSuccess = await savedLocalsController.validateAndSaveLocalInUserFavorites(req)
+                await savedLocalsController.saveNewLocalByUser(req)
+                var isSuccess = true
             } catch(e) {
                 var isSuccess = false
             }
@@ -24,10 +25,11 @@ describe('Testar funções de salvar locais como favoritos e retornar esses loca
                 body: {
                     idLocal: 2
                 }
-            };
+            }
 
             try {
-                var isSuccess = await savedLocalsController.validateAndSaveLocalInUserFavorites(req)
+                await savedLocalsController.saveNewLocalByUser(req)
+                var isSuccess = true
             } catch(e) {
                 var isSuccess = false
             }
@@ -42,7 +44,8 @@ describe('Testar funções de salvar locais como favoritos e retornar esses loca
             };
 
             try {
-                var isSuccess = await savedLocalsController.validateAndSaveLocalInUserFavorites(req)
+                await savedLocalsController.saveNewLocalByUser(req)
+                var isSuccess = true
             } catch(e) {
                 var isSuccess = false
             }
@@ -58,7 +61,8 @@ describe('Testar funções de salvar locais como favoritos e retornar esses loca
             };
 
             try {
-                var isSuccess = await savedLocalsController.validateAndSaveLocalInUserFavorites(req)
+                await savedLocalsController.saveNewLocalByUser(req)
+                var isSuccess = true
             } catch(e) {
                 var isSuccess = false
             }
@@ -74,7 +78,8 @@ describe('Testar funções de salvar locais como favoritos e retornar esses loca
             };
 
             try {
-                var isSuccess = await savedLocalsController.validateAndSaveLocalInUserFavorites(req)
+                await savedLocalsController.saveNewLocalByUser(req)
+                var isSuccess = true
             } catch(e) {
                 var isSuccess = false
             }
@@ -90,7 +95,8 @@ describe('Testar funções de salvar locais como favoritos e retornar esses loca
             };
 
             try {
-                var isSuccess = await savedLocalsController.validateAndSaveLocalInUserFavorites(req)
+                await savedLocalsController.saveNewLocalByUser(req)
+                var isSuccess = true
             } catch(e) {
                 var isSuccess = false
             }
@@ -106,7 +112,7 @@ describe('Testar funções de salvar locais como favoritos e retornar esses loca
             }; 
 
             try {
-                var result = await savedLocalsController.validateAndGetLocalsByIdUser(req)
+                var result = await savedLocalsController.getLocalsSavedByUser(req)
             } catch(e) {
                 var result = false
             }
@@ -121,7 +127,7 @@ describe('Testar funções de salvar locais como favoritos e retornar esses loca
             }; 
 
             try {
-                var result = await savedLocalsController.validateAndGetLocalsByIdUser(req)
+                var result = await savedLocalsController.getLocalsSavedByUser(req)
             } catch(e) {
                 var result = false
             }
@@ -136,7 +142,7 @@ describe('Testar funções de salvar locais como favoritos e retornar esses loca
             }; 
 
             try {
-                var result = await savedLocalsController.validateAndGetLocalsByIdUser(req)
+                var result = await savedLocalsController.getLocalsSavedByUser(req)
             } catch(e) {
                 var result = false
             }
