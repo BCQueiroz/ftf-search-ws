@@ -1,18 +1,18 @@
 require('dotenv').config()
 const express = require('express')
-const SearchController = require('./controller/searchController')
-const UserController = require('./controller/UserController')
-const SavedLocalsController = require('./controller/SavedLocalsController')
+const SearchService = require('./service/SearchService')
+const UserService = require('./service/UserService')
+const SavedLocalsService = require('./service/SavedLocalsService')
 
 const port = process.env.PORT || 3004
 const app = express()
-const searchController = new SearchController()
-const userController = new UserController()
-const savedLocalsController = new SavedLocalsController()
+const searchService = new SearchService()
+const userService = new UserService()
+const savedLocalsService = new SavedLocalsService()
 
-app.use('/api/search', searchController.routes)
-app.use('/api/auth', userController.routes)
-app.use('/api/saved', savedLocalsController.routes)
+app.use('/api/search', searchService.routes)
+app.use('/api/auth', userService.routes)
+app.use('/api/saved', savedLocalsService.routes)
 
 app.listen(port, () => {
     console.log(`Iniciando servidor back-end, porta ${port}`)

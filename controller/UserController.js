@@ -1,5 +1,4 @@
 require('dotenv').config()
-const express = require('express')
 const passwordValidator = require('password-validator')
 const cryptoUtil = require('../utils/CryptoUtil')
 const dateUtil = require('../utils/DateUtil')
@@ -9,7 +8,6 @@ const UserLoggedInfoDTO = require('../model/UserLoggedInfoDTO')
 class UserController {
 
     constructor(){
-        this.routes = express.Router()
         this.userDAO = new userDAO()
         this.cryptoUtil = new cryptoUtil()
         this.dateUtil = new dateUtil()
@@ -21,13 +19,9 @@ class UserController {
                     .has().lowercase()
                     .has().digits()
                     .has().symbols()
-
-        this.routes.get('/create-user-account', express.json(), this.createUserAccount.bind(this))
-        this.routes.get('/user-login', express.json(), this.userLogin.bind(this))
-        this.routes.get('/recover-password-by-email', express.json(), this.recoverPasswordByEmail.bind(this))
     }
 
-    createUserAccount = async (req, res) => {
+    createUserAccount = async (req) => {
         var data = {}
         if(req && req.body) data = req.body
 
@@ -49,19 +43,16 @@ class UserController {
         } catch(e) {
             throw Error("Ocorreu um erro ao criar usuário. Erro:" + e)
         }
-
-        res.send({ success: true, message: 'Usuário criado com sucesso!'})
     }
 
-    userLogin = async(req, res) => {
+    userLogin = async(req) => {
+        return await this.autenthicateByEmail(req)
+    }
+
+    autenthicateByEmail = async(req) => {
         var data = {}
         if(req && req.body) data = req.body
-        var userLoggedInfo = await this.autenthicateByEmail(data)
 
-        res.send({ success: true, message: "Usuário logado com sucesso.", result: userLoggedInfo})
-    }
-
-    autenthicateByEmail = async(data) => {
         if(Boolean(data.email) == false || Boolean(data.password) == false) throw Error("Email e/ou senha não foram informados para iniciar validação de login, abortando.")
 
         var userInfo = await this.userDAO.getUserDataByEmail(data.email)
@@ -82,7 +73,7 @@ class UserController {
         }
     }
 
-    recoverPasswordByEmail = async(req, res) => {
+    recoverPasswordByEmail = async(req) => {
         var data = {}
         if(req && req.body && req.body.idUser && req.body.newPassword && req.body.email) data = req.body 
         else throw Error("Não foram informadas todas as informações para atualizar a senha.")
@@ -90,7 +81,6 @@ class UserController {
         var newPasswordHash = await this.validateAndEncryptNewPassword(data)
         try{
             await this.userDAO.updateUserPassword(data.idUser, newPasswordHash)
-            res.send({ success: true, message: "Senha atualizada com sucesso.", result: {}})
         } catch(e) {
             throw new Error("Ocorreu um erro ao atualizar a senha, tente novamente.")
         }
