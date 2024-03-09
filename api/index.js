@@ -10,7 +10,7 @@ const searchService = new SearchService()
 const userService = new UserService()
 const savedLocalsService = new SavedLocalsService()
 
-app.use('/api/search', searchService.routes)
+//app.use('/api/search', searchService.routes)
 app.use('/api/auth', userService.routes)
 app.use('/api/saved', savedLocalsService.routes)
 
