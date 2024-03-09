@@ -4,7 +4,7 @@ const SearchService = require('../service/searchService')
 const UserService = require('../service/userService')
 const SavedLocalsService = require('../service/savedLocalsService')
 
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000
 const app = express()
 const searchService = new SearchService()
 const userService = new UserService()
