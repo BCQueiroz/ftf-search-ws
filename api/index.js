@@ -10,7 +10,7 @@ const searchService = new SearchService()
 const userService = new UserService()
 const savedLocalsService = new SavedLocalsService()
 
-//app.use('/api/search', searchService.routes)
+app.use('/api/search', searchService.routes)
 app.use('/api/auth', userService.routes)
 app.use('/api/saved', savedLocalsService.routes)
 
@@ -20,7 +20,7 @@ app.listen(port, () => {
 
 app.get('/', (req, res) => res.send("Express on Vercel"));
 
-app.get('/api/search/search-locals', async(req, res) => {
+/*app.get('/api/search/search-locals', async(req, res) => {
     res.send(await searchService.searchLocals(req, res))
 })
 
@@ -34,6 +34,6 @@ app.get('/api/search/get-all-cities', async(req, res) => {
 
 app.get('/api/search/get-local-additional-info', async(req, res) => {
     res.send(await searchService.getLocalAdditionalInfo(req, res))
-})
+})*/
 
 module.exports = app
