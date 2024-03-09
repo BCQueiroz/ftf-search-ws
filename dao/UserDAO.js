@@ -1,4 +1,4 @@
-const UserInfoDTO = require('../model/UserInfoDTO')
+const UserInfoDTO = require('../model/userInfoDTO')
 const postgressConnection = require('../utils/DbConnector')
 
 class UserDAO {

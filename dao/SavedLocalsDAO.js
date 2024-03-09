@@ -1,5 +1,5 @@
 const postgressConnection = require('../utils/DbConnector')
-const LocalDTO = require('../model/LocalDTO')
+const LocalDTO = require('../model/localDTO')
 
 class SavedLocalsDAO {
 

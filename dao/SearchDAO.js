@@ -1,9 +1,9 @@
-const LocalDTO = require('../model/LocalDTO')
-const TagInfoDTO = require('../model/TagInfoDTO')
-const CityDTO = require('../model/CityDTO')
+const LocalDTO = require('../model/localDTO')
+const TagInfoDTO = require('../model/tagInfoDTO')
+const CityDTO = require('../model/cityDTO')
 const postgressConnection = require('../utils/DbConnector')
-const LocalAdditionalInfoDTO = require('../model/LocalAdditionalInfoDTO')
-const LocalScheduleDTO = require('../model/LocalScheduleDTO')
+const LocalAdditionalInfoDTO = require('../model/localAdditionalInfoDTO')
+const LocalScheduleDTO = require('../model/localScheduleDTO')
 
 class SearchDAO{
 

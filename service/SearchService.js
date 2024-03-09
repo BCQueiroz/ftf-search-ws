@@ -1,5 +1,5 @@
 const express = require('express')
-const SearchController = require('../controller/SearchController')
+const SearchController = require('../controller/searchController')
 
 class SearchService {
 

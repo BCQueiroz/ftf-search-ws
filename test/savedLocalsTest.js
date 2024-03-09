@@ -1,5 +1,5 @@
 const assert = require('assert')
-const SavedLocalsController = require('../controller/SavedLocalsController')
+const SavedLocalsController = require('../controller/savedLocalsController')
 
 describe('Testar funções de salvar locais como favoritos e retornar esses locais', function(){
     const savedLocalsController = new SavedLocalsController()

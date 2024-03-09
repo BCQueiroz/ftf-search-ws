@@ -1,5 +1,5 @@
 const express = require('express')
-const SavedLocalsController = require('../controller/SavedLocalsController')
+const SavedLocalsController = require('../controller/savedLocalsController')
 
 class SavedLocalsService{
 
