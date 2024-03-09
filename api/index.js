@@ -1,16 +1,16 @@
 require('dotenv').config()
 const express = require('express')
-const SearchService = require('../service/searchService')
+const searchService = require('../service/searchService')
 const UserService = require('../service/userService')
 const SavedLocalsService = require('../service/savedLocalsService')
 
 const port = process.env.PORT || 3000
 const app = express()
-const searchService = new SearchService()
+const searchServiceImpl = new searchService()
 const userService = new UserService()
 const savedLocalsService = new SavedLocalsService()
 
-app.use('/api/search', searchService.routes)
+app.use('/api/search', searchServiceImpl.routes)
 app.use('/api/auth', userService.routes)
 app.use('/api/saved', savedLocalsService.routes)
 
