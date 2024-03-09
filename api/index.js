@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-import SearchService from "../service/searchService"
+const SearchService = require('../service/searchService')
 const UserService = require('../service/userService')
 const SavedLocalsService = require('../service/savedLocalsService')
 

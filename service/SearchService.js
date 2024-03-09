@@ -1,7 +1,7 @@
 const express = require('express')
 const SearchController = require('../controller/searchController')
 
-class SearchService {
+class searchService {
 
     constructor(){
         this.routes = express.Router()
@@ -51,4 +51,4 @@ class SearchService {
     }
 }
 
-module.exports = SearchService
+module.exports = searchService
