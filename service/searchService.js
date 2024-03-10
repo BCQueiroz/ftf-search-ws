@@ -1,7 +1,7 @@
 const express = require('express')
-const SearchController = require('../controller/SearchController')
+const SearchController = require('../controller/searchController')
 
-class SearchService {
+class searchService {
 
     constructor(){
         this.routes = express.Router()
@@ -28,7 +28,7 @@ class SearchService {
             var tags = await this.searchController.getAllTags()
             res.send({success: true, message: "Tags retornadas com sucesso.", result: {tags: tags}})
         } catch(e) {
-            throw Error('Ocorreu um erro ao retornar as tags.')
+            throw Error(`Ocorreu um erro ao retornar as tags. Erro: ${e}`)
         }
     }
 
@@ -51,4 +51,4 @@ class SearchService {
     }
 }
 
-module.exports = SearchService
+module.exports = searchService

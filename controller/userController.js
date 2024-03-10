@@ -2,8 +2,8 @@ require('dotenv').config()
 const passwordValidator = require('password-validator')
 const cryptoUtil = require('../utils/CryptoUtil')
 const dateUtil = require('../utils/DateUtil')
-const userDAO = require('../dao/UserDAO')
-const UserLoggedInfoDTO = require('../model/UserLoggedInfoDTO')
+const userDAO = require('../dao/userDAO')
+const UserLoggedInfoDTO = require('../model/userLoggedInfoDTO')
 
 class UserController {
 

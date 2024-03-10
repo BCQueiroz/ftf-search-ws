@@ -1,6 +1,6 @@
 
 const assert = require('assert')
-const SearchController = require('../controller/SearchController')
+const SearchController = require('../controller/searchController')
 
 describe('Testes com serviços que retornam dados para a tela de pesquisa de locais', function() {
 
