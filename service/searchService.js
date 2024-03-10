@@ -30,7 +30,7 @@ class searchService {
             res.send({success: true, message: "Tags retornadas com sucesso.", result: {tags: tags}})
             //return {success: true, message: "Tags retornadas com sucesso.", result: {tags: tags}}
         } catch(e) {
-            throw Error('Ocorreu um erro ao retornar as tags.')
+            throw Error(`Ocorreu um erro ao retornar as tags. Erro: ${e}`)
         }
     }
 
