@@ -1,8 +1,8 @@
 require('dotenv').config()
-const localDTO = require('../model/LocalDTO')
+const localDTO = require('../model/localDTO')
 const searchDAO = require('../dao/searchDAO')
 const weekDays = require('../utils/WeekDayEnum')
-const TagTypeDTO = require('../model/TagTypeDTO')
+const TagTypeDTO = require('../model/tagTypeDTO')
 
 class SearchController{
 
