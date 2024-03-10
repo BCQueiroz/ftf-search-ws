@@ -20,20 +20,4 @@ app.listen(port, () => {
 
 app.get('/', (req, res) => res.send("Express on Vercel"));
 
-/*app.get('/api/search/search-locals', async(req, res) => {
-    res.send(await searchService.searchLocals(req, res))
-})
-
-app.get('/api/search/get-all-tags', async(req, res) => {
-    res.send(await searchService.getAllTags(req, res))
-})
-
-app.get('/api/search/get-all-cities', async(req, res) => {
-    res.send(await searchService.getAllCities(req, res))
-})
-
-app.get('/api/search/get-local-additional-info', async(req, res) => {
-    res.send(await searchService.getLocalAdditionalInfo(req, res))
-})*/
-
 module.exports = app
