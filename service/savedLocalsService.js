@@ -7,8 +7,8 @@ class SavedLocalsService{
         this.routes = express.Router()
         this.savedLocalsController = new SavedLocalsController()
 
-        this.routes.get('/save-new-local-by-user', express.json(), this.saveNewLocalByUser.bind(this))
-        this.routes.get('/get-locals-saved-by-user', express.json(), this.getLocalsSavedByUser.bind(this))
+        this.routes.post('/save-new-local-by-user', express.json(), this.saveNewLocalByUser.bind(this))
+        this.routes.post('/get-locals-saved-by-user', express.json(), this.getLocalsSavedByUser.bind(this))
     }
 
     saveNewLocalByUser = async(req, res) => {

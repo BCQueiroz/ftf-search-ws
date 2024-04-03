@@ -7,10 +7,10 @@ class searchService {
         this.routes = express.Router()
         this.searchController = new SearchController()
 
-        this.routes.get('/search-locals', express.json(), this.searchLocals.bind(this))
+        this.routes.post('/search-locals', express.json(), this.searchLocals.bind(this))
         this.routes.get('/get-all-tags', express.json(), this.getAllTags.bind(this))
         this.routes.get('/get-all-cities', express.json(), this.getAllCities.bind(this))
-        this.routes.get('/get-local-additional-info', express.json(), this.getLocalAdditionalInfo.bind(this))
+        this.routes.post('/get-local-additional-info', express.json(), this.getLocalAdditionalInfo.bind(this))
     }
 
     searchLocals = async(req, res) => {
