@@ -13,7 +13,7 @@ class UserService {
     }
 
     createUserAccount = async(req, res) => {
-        try{
+        try {
             await this.userController.createUserAccount(req)
             res.send({ success: true, message: 'Usuário criado com sucesso!', result: {}})
         } catch(e) {
