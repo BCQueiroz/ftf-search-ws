@@ -19,7 +19,7 @@ class SearchDAO{
         await this.postgresSql`
                 SELECT tb_local.id_local,
                       tb_local.nm_local, 
-                      tb_address.nm_address, 
+                      (tb_address.nm_address || ', ' || tb_local.cd_number_address || ', ' || tb_address.ds_neighborhood) AS nm_address, 
                       tb_local.cd_number_address, 
                       tb_city.nm_city, 
                       tb_local_week_workday.dh_begin_day,
@@ -125,10 +125,12 @@ class SearchDAO{
                        COALESCE(tb_local.ds_local, '') AS ds_local,
                        tb_local.ds_phone,
                        COALESCE(tb_local.ds_site, '') AS ds_site,
-                       COALESCE(tb_local.ds_address_complement, '') AS ds_address_complement,
+                       (tb_address.nm_address || ', ' || tb_local.cd_number_address || ', ' || tb_address.ds_neighborhood) AS ds_address_complement,
                        COALESCE(tb_local.vl_min_price_aprox, 0) AS vl_min_price_aprox,
                        COALESCE(tb_local.vl_max_price_aprox, 0) AS vl_max_price_aprox
                 FROM tb_local
+                INNER JOIN tb_address
+                    ON tb_local.id_address = tb_address.id_address 
                 WHERE id_local = ${idLocal} 
         `.forEach(it => {
             localData.nmLocal = it.nm_local

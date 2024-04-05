@@ -7,13 +7,13 @@ class UserService {
         this.routes = express.Router()
         this.userController = new UserController()
 
-        this.routes.get('/create-user-account', express.json(), this.createUserAccount.bind(this))
-        this.routes.get('/user-login', express.json(), this.userLogin.bind(this))
-        this.routes.get('/recover-password-by-email', express.json(), this.recoverPasswordByEmail.bind(this))
+        this.routes.post('/create-user-account', express.json(), this.createUserAccount.bind(this))
+        this.routes.post('/user-login', express.json(), this.userLogin.bind(this))
+        this.routes.post('/recover-password-by-email', express.json(), this.recoverPasswordByEmail.bind(this))
     }
 
     createUserAccount = async(req, res) => {
-        try{
+        try {
             await this.userController.createUserAccount(req)
             res.send({ success: true, message: 'Usuário criado com sucesso!', result: {}})
         } catch(e) {
