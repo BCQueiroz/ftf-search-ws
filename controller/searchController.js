@@ -70,7 +70,7 @@ class SearchController{
         localAdditionalInfo.localAllTags = localAllTags
         localAdditionalInfo.localScheduleWork = localScheduleWork
 
-       return localAdditionalInfo
+        return localAdditionalInfo
     }
 }
 
