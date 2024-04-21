@@ -25,6 +25,24 @@ class SavedLocalsController {
         }
     }
 
+    removeItemFromUserSavedLocals = async(req) => {
+        var data = {}
+        if(req && req.body && req.body.idUser && req.body.idLocal) data = req.body 
+        else throw Error("Não foram informadas todas as informações para salvar o local nos favoritos.")
+
+        var userExists = await this.savedLocalsDAO.validateIfUserExists(data.idUser)
+        if(!userExists) throw Error('O Usuário informado não existe.')
+
+        var localExists = await this.savedLocalsDAO.validateIfLocalExists(data.idLocal)
+        if(!localExists) throw Error('O Local informado não existe.')
+
+        try {
+            await this.savedLocalsDAO.removeLocalFromUserList(data)
+        } catch(e) {
+            throw Error('Ocorreu um erro ao remover o local da lista dos favoritos.')
+        }
+    }
+
     getLocalsSavedByUser = async(req) => {
         var data = {}
         if(req && req.body && req.body.idUser) data = req.body 
@@ -41,6 +59,11 @@ class SavedLocalsController {
         } catch(e) {
             throw Error('Ocorreu um erro ao realizar a consulta.')
         }
+    }
+
+    validateIfLocalIsSaved = async(idUser, idLocal) => {
+        if(!Boolean(idUser) || !Boolean(idLocal)) throw Error('Informações insuficientes.')
+        return await this.savedLocalsDAO.validateIfLocalIsSaved(idUser, idLocal)
     }
 }
 

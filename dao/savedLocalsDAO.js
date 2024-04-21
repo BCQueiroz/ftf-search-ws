@@ -45,6 +45,20 @@ class SavedLocalsDAO {
         })
     }
 
+    removeLocalFromUserList = async(data) => {
+        await this.postgresSql.begin(async sql => {
+            await this.postgresSql`
+                DELETE FROM tb_local_user_saved
+                WHERE id_local = ${data.idLocal}
+                    AND id_user = ${data.idUser}
+            `
+        }).then(() => {
+
+        }).catch(() => {
+            console.log("Ocorreu um erro ao remover o local da lista.")
+        })
+    }
+
     getAllLocalsSavedByUser = async(data) => {
         var userLocals = []
         await this.postgresSql`
@@ -80,6 +94,18 @@ class SavedLocalsDAO {
             userLocals.push(local)
         })
         return userLocals
+    }
+
+    validateIfLocalIsSaved = async(idUser, idLocal) => {
+        var isSaved = false 
+        await this.postgresSql`
+            SELECT EXISTS(
+                SELECT 1 FROM tb_local_user_saved WHERE id_local = ${idLocal} AND id_user = ${idUser}
+            ) AS local_exists
+        `.forEach(it => {
+            isSaved = it.local_exists
+        })
+        return isSaved
     }
 }
 

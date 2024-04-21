@@ -26,7 +26,7 @@ class UserService {
             var userLoggedInfo = await this.userController.userLogin(req)
             res.send({ success: true, message: "Usuário logado com sucesso.", result: {userLoggedInfo: userLoggedInfo}})
         } catch(e) {
-            throw Error('Ocorreu um erro no login.')
+            res.send( { success: false, message: "Ocorreu um erro no login.", result: {}})
         }
     }
 

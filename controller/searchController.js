@@ -3,12 +3,14 @@ const localDTO = require('../model/localDTO')
 const searchDAO = require('../dao/searchDAO')
 const weekDays = require('../utils/WeekDayEnum')
 const TagTypeDTO = require('../model/tagTypeDTO')
+const SavedLocalController = require('../controller/savedLocalsController')
 
 class SearchController{
 
     constructor(){
         this.localDTO = new localDTO()
         this.searchDAO = new searchDAO()
+        this.savedLocalController = new SavedLocalController()
     }
 
     searchLocals = async (req) => {
@@ -21,9 +23,8 @@ class SearchController{
         const localsByTagCountMap = data.idTagList ? await this.searchDAO.getLocalsByTags(data) : new Map()
 
         var finalLocalsList = []
-        localsByParams.forEach(local => {
-            if(localsByTagCountMap.has(local.idLocal) 
-                && localsByTagCountMap.get(local.idLocal) == data.idTagList.length){
+        localsByParams.forEach(async local => {
+            if(localsByTagCountMap.has(local.idLocal) && localsByTagCountMap.get(local.idLocal) == data.idTagList.length){
                 finalLocalsList.push(local)
             }
         })
@@ -70,7 +71,7 @@ class SearchController{
         localAdditionalInfo.localAllTags = localAllTags
         localAdditionalInfo.localScheduleWork = localScheduleWork
 
-       return localAdditionalInfo
+        return localAdditionalInfo
     }
 }
 

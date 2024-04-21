@@ -57,7 +57,7 @@ class UserController {
 
         var userInfo = await this.userDAO.getUserDataByEmail(data.email)
 
-        if(Boolean(userInfo) == false) throw Error("Não existe usuário cadastrado com esse email. Por favor, confirme se o email está correto, ou crie uma nova conta se ainda não tiver uma.")
+        if(userInfo && userInfo.idUser == 0) throw Error("Não existe usuário cadastrado com esse email. Por favor, confirme se o email está correto, ou crie uma nova conta se ainda não tiver uma.")
     
         var passwordIsOk = await this.cryptoUtil.validateEncryptedInfo(data.password, userInfo.password)
 
