@@ -95,6 +95,18 @@ class SavedLocalsDAO {
         })
         return userLocals
     }
+
+    validateIfLocalIsSaved = async(idUser, idLocal) => {
+        var isSaved = false 
+        await this.postgresSql`
+            SELECT EXISTS(
+                SELECT 1 FROM tb_local_user_saved WHERE id_local = ${idLocal} AND id_user = ${idUser}
+            ) AS local_exists
+        `.forEach(it => {
+            isSaved = it.local_exists
+        })
+        return isSaved
+    }
 }
 
 module.exports = SavedLocalsDAO

@@ -60,6 +60,11 @@ class SavedLocalsController {
             throw Error('Ocorreu um erro ao realizar a consulta.')
         }
     }
+
+    validateIfLocalIsSaved = async(idUser, idLocal) => {
+        if(!Boolean(idUser) || !Boolean(idLocal)) throw Error('Informações insuficientes.')
+        return await this.savedLocalsDAO.validateIfLocalIsSaved(idUser, idLocal)
+    }
 }
 
 module.exports = SavedLocalsController
