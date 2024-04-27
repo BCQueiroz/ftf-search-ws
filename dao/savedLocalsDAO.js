@@ -1,67 +1,65 @@
-const postgressConnection = require('../utils/DbConnector')
 const LocalDTO = require('../model/localDTO')
+const pgManager = require('../utils/PgConnManager')
 
 class SavedLocalsDAO {
 
-    constructor(){
-        this.postgresSql = postgressConnection.newConection()
-    }
+    constructor(){}
 
     validateIfUserExists = async(idUser) => {
-        var userExists = false 
-        await this.postgresSql`
+        var userExists = false
+        var sql = `
             SELECT EXISTS(
-                SELECT 1 FROM tb_user WHERE id_user = ${idUser}
+                SELECT 1 FROM tb_user WHERE id_user = $1
             ) AS user_exists
-        `.forEach(it => {
+        `
+        var params = [idUser]
+        const result = await pgManager.executeQuery(sql, params)
+
+        result.rows.forEach(it => {
             userExists = it.user_exists
         })
         return userExists
     }
 
     validateIfLocalExists = async(idLocal) => {
-        var localExists = false 
-        await this.postgresSql`
+        var localExists = false
+        var sql = `
             SELECT EXISTS(
-                SELECT 1 FROM tb_local WHERE id_local = ${idLocal}
+                SELECT 1 FROM tb_local WHERE id_local = $1
             ) AS local_exists
-        `.forEach(it => {
+        `
+        var params = [idLocal]
+        const result = await pgManager.executeQuery(sql, params)
+
+        result.rows.forEach(it => {
             localExists = it.local_exists
         })
         return localExists
     }
 
     saveNewLocalInUserList = async(data) => {
-        await this.postgresSql.begin(async sql => {
-            await this.postgresSql`
-                INSERT INTO tb_local_user_saved(id_local, id_user)
-                VALUES(${data.idLocal}, ${data.idUser})
-                ON CONFLICT DO NOTHING
-            `
-        }).then(() => {
-            
-        }).catch(() => {
-            console.log("Ocorreu um erro ao salvar o local novo na lista.")
-        })
+        var sql = `
+            INSERT INTO tb_local_user_saved(id_local, id_user)
+            VALUES($1, $2)
+            ON CONFLICT DO NOTHING
+        `
+        var params = [data.idLocal, data.idUser]
+        pgManager.executeQuery(sql, params)
     }
 
     removeLocalFromUserList = async(data) => {
-        await this.postgresSql.begin(async sql => {
-            await this.postgresSql`
-                DELETE FROM tb_local_user_saved
-                WHERE id_local = ${data.idLocal}
-                    AND id_user = ${data.idUser}
-            `
-        }).then(() => {
-
-        }).catch(() => {
-            console.log("Ocorreu um erro ao remover o local da lista.")
-        })
+        var sql = `
+            DELETE FROM tb_local_user_saved
+            WHERE id_local = $1
+                AND id_user = $2
+        `
+        var params = [data.idLocal, data.idUser]
+        pgManager.executeQuery(sql, params)
     }
 
     getAllLocalsSavedByUser = async(data) => {
         var userLocals = []
-        await this.postgresSql`
+        var sql = `
             SELECT tb_local.id_local,
                     tb_local.nm_local, 
                     tb_address.nm_address, 
@@ -80,9 +78,13 @@ class SavedLocalsDAO {
                 ON tb_local.id_address = tb_address.id_address 
             INNER JOIN tb_city 
                 ON tb_address.id_city = tb_city.id_city
-            WHERE tb_local_user_saved.id_user = ${data.idUser}
-                AND UPPER(tb_week_workday.nm_day) = ${data.weekDay} 
-        `.forEach(it => {
+            WHERE tb_local_user_saved.id_user = $1
+                AND UPPER(tb_week_workday.nm_day) = $2
+        `
+        var params = [data.idUser, data.weekDay]
+        const result = await pgManager.executeQuery(sql, params)
+
+        result.rows.forEach(it => {
             let local = new LocalDTO()
             local.idLocal = it.id_local
             local.nmLocal = it.nm_local
@@ -98,11 +100,16 @@ class SavedLocalsDAO {
 
     validateIfLocalIsSaved = async(idUser, idLocal) => {
         var isSaved = false 
-        await this.postgresSql`
+        var sql = `
             SELECT EXISTS(
-                SELECT 1 FROM tb_local_user_saved WHERE id_local = ${idLocal} AND id_user = ${idUser}
+                SELECT 1 FROM tb_local_user_saved 
+                WHERE id_user = $1 AND id_local = $2 
             ) AS local_exists
-        `.forEach(it => {
+        `
+        var params = [idUser, idLocal]
+        const result = await pgManager.executeQuery(sql, params)
+
+        result.rows.forEach(it => {
             isSaved = it.local_exists
         })
         return isSaved

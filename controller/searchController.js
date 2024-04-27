@@ -19,10 +19,16 @@ class SearchController{
         if(req && req.body) data = req.body
         data.weekDay = weekDays[day]
         
+        var finalLocalsList = []
         const localsByParams = await this.searchDAO.getLocalsByParams(data)
+        
+        if(data.idTagList && data.idTagList.length == 0) {
+            finalLocalsList.push(...localsByParams)
+            return finalLocalsList
+        }
+
         const localsByTagCountMap = data.idTagList ? await this.searchDAO.getLocalsByTags(data) : new Map()
 
-        var finalLocalsList = []
         localsByParams.forEach(async local => {
             if(localsByTagCountMap.has(local.idLocal) && localsByTagCountMap.get(local.idLocal) == data.idTagList.length){
                 finalLocalsList.push(local)
