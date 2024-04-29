@@ -3,14 +3,12 @@ const localDTO = require('../model/localDTO')
 const searchDAO = require('../dao/searchDAO')
 const weekDays = require('../utils/WeekDayEnum')
 const TagTypeDTO = require('../model/tagTypeDTO')
-const SavedLocalController = require('../controller/savedLocalsController')
 
 class SearchController{
 
     constructor(){
         this.localDTO = new localDTO()
         this.searchDAO = new searchDAO()
-        this.savedLocalController = new SavedLocalController()
     }
 
     searchLocals = async (req) => {
@@ -65,8 +63,7 @@ class SearchController{
         return await this.searchDAO.getAllCities()
     }
 
-    getLocalAdditionalInfo = async(req) => {
-        var data = req.body
+    getLocalAdditionalInfo = async(data) => {
         var idLocal = data.idLocal
         if(!Boolean(idLocal)) throw Error("Não foi passado id do local desejado na requisição, abortando.")
 

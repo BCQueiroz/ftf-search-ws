@@ -1,10 +1,12 @@
 const weekDays = require('../utils/WeekDayEnum')
 const SavedLocalsDAO = require('../dao/savedLocalsDAO')
+const SearchController = require('../controller/searchController')
 
 class SavedLocalsController {
 
     constructor(){
         this.savedLocalsDAO = new SavedLocalsDAO()
+        this.searchController = new SearchController()
     }
 
     saveNewLocalByUser = async(req) => {
@@ -55,7 +57,15 @@ class SavedLocalsController {
         data.weekDay = weekDays[day]
 
         try{
-            return await this.savedLocalsDAO.getAllLocalsSavedByUser(data)
+            const result = await this.savedLocalsDAO.getAllLocalsSavedByUser(data)
+            var idLocalList = result.map(it => it.idLocal)
+            
+            const tagsByLocal = await this.savedLocalsDAO.getAllLocalTags(idLocalList)
+
+            result.forEach(async it => {
+                it.tagsInfo = tagsByLocal.has(it.idLocal) ? tagsByLocal.get(it.idLocal) : []
+            })
+            return result
         } catch(e) {
             throw Error('Ocorreu um erro ao realizar a consulta.')
         }

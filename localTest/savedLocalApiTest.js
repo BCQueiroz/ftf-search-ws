@@ -57,4 +57,10 @@ describe("Testando serviços referentes a salvar e recuperar locais salvos por u
         }
         console.log(result)
     })
+    
+    it("getAllLocalTags", async function() {
+        var idLocalList = [2, 4, 28]
+        const result = await savedLocalDAO.getAllLocalTags(idLocalList)
+        console.log(result)
+    })
 })
