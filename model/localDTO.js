@@ -1,3 +1,4 @@
+const LocalAdditionalInfoDTO = require("./localAdditionalInfoDTO")
 
 
 class LocalDTO { 
@@ -10,6 +11,7 @@ class LocalDTO {
         this.nmCity = ""
         this.dhBeginDay = ""
         this.dhEndDay = ""
+        this.additionalInfo = undefined
     }
 }
 

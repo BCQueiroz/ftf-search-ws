@@ -43,7 +43,7 @@ class searchService {
 
     getLocalAdditionalInfo = async(req, res) => {
         try{
-            var localAdditionalInfo = await this.searchController.getLocalAdditionalInfo(req)
+            var localAdditionalInfo = await this.searchController.getLocalAdditionalInfo(req.body)
             res.send({success: true, message: "Informação adicional retornada com sucesso.", result: {localAdditionalInfo: localAdditionalInfo}})
         } catch(e) {
             throw Error('Ocorreu um erro ao consultar informações.')

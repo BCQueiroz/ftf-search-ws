@@ -1,4 +1,5 @@
 const LocalDTO = require('../model/localDTO')
+const TagInfoDTO = require('../model/tagInfoDTO')
 const pgManager = require('../utils/PgConnManager')
 
 class SavedLocalsDAO {
@@ -63,7 +64,7 @@ class SavedLocalsDAO {
             SELECT tb_local.id_local,
                     tb_local.nm_local, 
                     tb_address.nm_address, 
-                    tb_local.cd_number_address, 
+                    (tb_address.nm_address || ', ' || tb_local.cd_number_address || ', ' || tb_address.ds_neighborhood) AS nm_address, 
                     tb_city.nm_city, 
                     tb_local_week_workday.dh_begin_day,
                     tb_local_week_workday.dh_end_day 
@@ -98,6 +99,34 @@ class SavedLocalsDAO {
         return userLocals
     }
 
+    getAllLocalTags = async(idLocalList) => {
+        var tagsByLocal = new Map()
+        var sql = `
+            SELECT tb_local_tag.id_local, 
+                    tb_local_tag.id_tag, 
+                    tb_tag.ds_tag, 
+                    tb_type_tag.cd_color_type_tag
+            FROM tb_local_tag
+            INNER JOIN tb_tag
+                ON tb_local_tag.id_tag = tb_tag.id_tag
+            INNER JOIN tb_type_tag
+                ON tb_tag.id_type_tag = tb_type_tag.id_type_tag
+            WHERE id_local = ANY($1)
+        `
+        var params = [idLocalList]
+        const result = await pgManager.executeQuery(sql, params)
+
+        result.rows.forEach(it => {
+            if(!tagsByLocal.has(it.id_local)) tagsByLocal.set(it.id_local, [])
+            var tagInfo = new TagInfoDTO()
+            tagInfo.idTag = it.id_tag
+            tagInfo.dsTag = it.ds_tag
+            tagInfo.cdColorTypeTag = it.cd_color_type_tag
+            tagsByLocal.get(it.id_local).push(tagInfo)
+        })
+        return tagsByLocal
+    }
+
     validateIfLocalIsSaved = async(idUser, idLocal) => {
         var isSaved = false 
         var sql = `
@@ -113,6 +142,21 @@ class SavedLocalsDAO {
             isSaved = it.local_exists
         })
         return isSaved
+    }
+
+    getIdLocalsSavedByUser = async(idUser) => {
+        var localsSavedSet = new Set()
+        var sql = `
+            SELECT id_local FROM tb_local_user_saved
+            WHERE id_user = $1
+        `
+        var params = [idUser]
+        const result = await pgManager.executeQuery(sql, params)
+
+        result.rows.forEach(it => {
+            localsSavedSet.add(it.id_local)
+        })
+        return localsSavedSet
     }
 }
 

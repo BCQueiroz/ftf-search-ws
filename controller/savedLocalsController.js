@@ -55,15 +55,23 @@ class SavedLocalsController {
         data.weekDay = weekDays[day]
 
         try{
-            return await this.savedLocalsDAO.getAllLocalsSavedByUser(data)
+            const result = await this.savedLocalsDAO.getAllLocalsSavedByUser(data)
+            var idLocalList = result.map(it => it.idLocal)
+            
+            const tagsByLocal = await this.savedLocalsDAO.getAllLocalTags(idLocalList)
+
+            result.forEach(async it => {
+                it.tagsInfo = tagsByLocal.has(it.idLocal) ? tagsByLocal.get(it.idLocal) : []
+            })
+            return result
         } catch(e) {
             throw Error('Ocorreu um erro ao realizar a consulta.')
         }
     }
 
-    validateIfLocalIsSaved = async(idUser, idLocal) => {
-        if(!Boolean(idUser) || !Boolean(idLocal)) throw Error('Informações insuficientes.')
-        return await this.savedLocalsDAO.validateIfLocalIsSaved(idUser, idLocal)
+    getIdLocalsSavedByUser = async(idUser) => {
+        if(!Boolean(idUser)) return new Set()
+        return await this.savedLocalsDAO.getIdLocalsSavedByUser(idUser)
     }
 }
 

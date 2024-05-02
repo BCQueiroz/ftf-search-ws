@@ -1,16 +1,16 @@
 require('dotenv').config()
 const localDTO = require('../model/localDTO')
 const searchDAO = require('../dao/searchDAO')
+const SavedLocalDAO = require('../dao/savedLocalsDAO')
 const weekDays = require('../utils/WeekDayEnum')
 const TagTypeDTO = require('../model/tagTypeDTO')
-const SavedLocalController = require('../controller/savedLocalsController')
 
 class SearchController{
 
     constructor(){
         this.localDTO = new localDTO()
         this.searchDAO = new searchDAO()
-        this.savedLocalController = new SavedLocalController()
+        this.savedLocalDAO = new SavedLocalDAO()
     }
 
     searchLocals = async (req) => {
@@ -18,12 +18,20 @@ class SearchController{
         var data = {}
         if(req && req.body) data = req.body
         data.weekDay = weekDays[day]
+
+        if(!Boolean(data.idUser)) throw Error("Usuário não informado.")
         
         var finalLocalsList = []
         const localsByParams = await this.searchDAO.getLocalsByParams(data)
+
+        const localsSavedSet = await this.savedLocalDAO.getIdLocalsSavedByUser(data.idUser)
         
         if(data.idTagList && data.idTagList.length == 0) {
             finalLocalsList.push(...localsByParams)
+
+            finalLocalsList.forEach(async local =>{
+                local.isSaved = localsSavedSet.has(local.idLocal)
+            })
             return finalLocalsList
         }
 
@@ -31,6 +39,7 @@ class SearchController{
 
         localsByParams.forEach(async local => {
             if(localsByTagCountMap.has(local.idLocal) && localsByTagCountMap.get(local.idLocal) == data.idTagList.length){
+                local.isSaved = localsSavedSet.has(local.idLocal)
                 finalLocalsList.push(local)
             }
         })
@@ -65,8 +74,7 @@ class SearchController{
         return await this.searchDAO.getAllCities()
     }
 
-    getLocalAdditionalInfo = async(req) => {
-        var data = req.body
+    getLocalAdditionalInfo = async(data) => {
         var idLocal = data.idLocal
         if(!Boolean(idLocal)) throw Error("Não foi passado id do local desejado na requisição, abortando.")
 
