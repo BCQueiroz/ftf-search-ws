@@ -143,6 +143,21 @@ class SavedLocalsDAO {
         })
         return isSaved
     }
+
+    getIdLocalsSavedByUser = async(idUser) => {
+        var localsSavedSet = new Set()
+        var sql = `
+            SELECT id_local FROM tb_local_user_saved
+            WHERE id_user = $1
+        `
+        var params = [idUser]
+        const result = await pgManager.executeQuery(sql, params)
+
+        result.rows.forEach(it => {
+            localsSavedSet.add(it.id_local)
+        })
+        return localsSavedSet
+    }
 }
 
 module.exports = SavedLocalsDAO

@@ -6,7 +6,6 @@ class SavedLocalsController {
 
     constructor(){
         this.savedLocalsDAO = new SavedLocalsDAO()
-        this.searchController = new SearchController()
     }
 
     saveNewLocalByUser = async(req) => {
@@ -71,9 +70,9 @@ class SavedLocalsController {
         }
     }
 
-    validateIfLocalIsSaved = async(idUser, idLocal) => {
-        if(!Boolean(idUser) || !Boolean(idLocal)) throw Error('Informações insuficientes.')
-        return await this.savedLocalsDAO.validateIfLocalIsSaved(idUser, idLocal)
+    getIdLocalsSavedByUser = async(idUser) => {
+        if(!Boolean(idUser)) return new Set()
+        return await this.savedLocalsDAO.getIdLocalsSavedByUser(idUser)
     }
 }
 
