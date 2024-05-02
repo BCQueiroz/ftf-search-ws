@@ -1,6 +1,5 @@
 const weekDays = require('../utils/WeekDayEnum')
 const SavedLocalsDAO = require('../dao/savedLocalsDAO')
-const SearchController = require('../controller/searchController')
 
 class SavedLocalsController {
 
