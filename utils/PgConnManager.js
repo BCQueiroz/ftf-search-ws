@@ -3,7 +3,7 @@ const { Pool } = pg
 const fs = require('fs')
 
 const pool = new Pool({ 
-    connectionString: process.env.DB_CONNECTION + '&sslrootcert=certificates/ca-certificate.crt',
+    connectionString: process.env.DB_CONNECTION
 })
 
 /*
