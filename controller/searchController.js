@@ -22,12 +22,9 @@ class SearchController{
         if(!Boolean(data.idUser)) throw Error("Usuário não informado.")
         
         var finalLocalsList = []
-        console.log(data)
         const localsByParams = await this.searchDAO.getLocalsByParams(data)
-        console.log(localsByParams)
 
         const localsSavedSet = await this.savedLocalDAO.getIdLocalsSavedByUser(data.idUser)
-        console.log(localsSavedSet)
         
         if(data.idTagList && data.idTagList.length == 0) {
             finalLocalsList.push(...localsByParams)
@@ -39,7 +36,6 @@ class SearchController{
         }
 
         const localsByTagCountMap = data.idTagList ? await this.searchDAO.getLocalsByTags(data) : new Map()
-        console.log(localsByTagCountMap)
 
         localsByParams.forEach(async local => {
             if(localsByTagCountMap.has(local.idLocal) && localsByTagCountMap.get(local.idLocal) == data.idTagList.length){

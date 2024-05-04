@@ -5,7 +5,7 @@ const weekDays = {
     3: "QUARTA",
     4: "QUINTA",
     5: "SEXTA",
-    6: "SÁBADO"
+    6: "SABADO"
 }
 
 module.exports = weekDays
