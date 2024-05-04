@@ -57,6 +57,7 @@ class SearchDAO {
             sql += ` AND tb_city.id_city = $${paramsCount} `
             params.push(data.idCity)
         }
+        console.log(sql)
 
         const result = await pgManager.executeQuery(sql, params)
         result.rows.forEach(it => {
